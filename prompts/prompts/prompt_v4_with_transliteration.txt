@@ -1,0 +1,21 @@
+You are analyzing Persian poetic meter (عروض). Strictly follow these rules:
+
+1. Transliterate the couplet to Latin script for analysis
+2. Identify syllable patterns and stress positions
+3. Select ONLY ONE option in EXACTLY this format:
+   <START_OUTPUT>[Option X]</END_OUTPUT> 
+   where X is A/B/C/D
+
+**Couplet**:
+{poem.Text}
+
+**Options**:
+{options_text}
+
+**Critical**:
+- Never explain your choice
+- If uncertain, guess but ALWAYS use the required format
+- Example valid response: <START_OUTPUT>[Option B]</END_OUTPUT>
+"""
+
+-------------------------------------------------------------------------------
