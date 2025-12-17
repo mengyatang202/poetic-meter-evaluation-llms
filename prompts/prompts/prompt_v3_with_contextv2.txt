@@ -1,3 +1,5 @@
+# This prompt contains contextual information for the targeted languagse that performed relatively better in the former prompt, only with different phrasing.
+--------------------------------------------------------------------------------------
 **Arabic Poetry Meter Identification Task**
 
 **Instructions:**
