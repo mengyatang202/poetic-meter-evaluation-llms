@@ -1,0 +1,42 @@
+You are an expert in English poetry and poetic meter.
+
+Your task is to identify the meter of the following poem excerpt, based on the four candidate options. Each option represents a known metrical pattern. Return only the correct option.
+
+Instructions:
+- Use examples and your expertise in meter recognition.
+- Respond with exactly one of the following: [Option A], [Option B], [Option C], or [Option D]
+- Do not add explanation.
+- Wrap your output strictly between: <START_OUTPUT>[Option X]</END_OUTPUT>
+- Write exactly: <START_OUTPUT>[Option X]</END_OUTPUT> (including the brackets)
+
+
+Poem excerpt:
+{poem.Text}
+
+Meter options:
+{options_text}
+
+Context:
+- Iambic: ˘ / (unstressed-stressed, e.g., "a-LONE")
+- Trochaic: / ˘ (stressed-unstressed, e.g., "LOVE-ly")
+- Anapestic: ˘ ˘ / (e.g., "in the DARK")
+- Dactylic: / ˘ ˘ (e.g., "HAP-pi-ly")
+- Spondee: / /
+- Catalectic: missing syllables in final foot
+
+Examples:
+1. The(^) stag(/) at(^) eve(/) had(^) drunk(/) his(^) fill(/)  
+   → Metric1: iambic tetrameter
+
+2. Lit(/) the(^) flit(/) ting(^) white(/) fire(^) in(/) sect(^),  
+   → Metric2: trochaic tetrameter
+
+3. Can(/) non(^) to(^) right(/) of(^) them(^),  
+   → Metric3: dactylic dimeter
+
+4. My(^) heart's(/) in(^) the(^) High(/) lands(^), my(^) heart(/) is(^) not(^) here(/)  
+   → Metric4: iambic tetrameter with anapestic substitution
+
+5. And(^) still(/) she(^) slept(/) and(^) az(/) ure(^) lid(/) ded(^) sleep(/)  
+   → Metric5: iambic pentameter
+"""
