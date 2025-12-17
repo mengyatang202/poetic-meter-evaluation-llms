@@ -1,0 +1,30 @@
+{
+  "model": "mistral_7b",
+  "prompt_version": "prompt_v1",
+  "language": "en",
+  "predictions": [
+    {
+      "poem_id": "en_001",
+      "model_choice": "A",
+      "raw_output": "A"
+    },
+    {
+      "poem_id": "en_002",
+      "model_choice": "C",
+      "raw_output": "C"
+    },
+    {
+      "poem_id": "en_003",
+      "model_choice": "C",
+      "raw_output": "C"
+    },{
+      "poem_id": "en_004",
+      "model_choice": "C",
+      "raw_output": "C"
+    },{
+      "poem_id": "en_005",
+      "model_choice": "C",
+      "raw_output": "C"
+    }
+  ]
+}
