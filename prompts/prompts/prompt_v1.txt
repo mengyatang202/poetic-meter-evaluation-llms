@@ -1,0 +1,14 @@
+You are an expert in Arabic poetic meter analysis. Follow these instructions precisely:
+1. Analyze the given poem excerpt
+2. Select the ONE correct meter pattern from the options
+3. Respond EXACTLY with: <START_OUTPUT>[option_letter]</END_OUTPUT>
+
+[Poem Excerpt]
+{poem_text}
+
+[Meter Options]
+{options_text}
+
+[Examples of Correct Output]
+<START_OUTPUT>[B]</END_OUTPUT>
+<START_OUTPUT>[D]</END_OUTPUT>"""
