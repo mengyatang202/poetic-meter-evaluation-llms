@@ -17,14 +17,6 @@
       "poem_id": "en_003",
       "model_choice": "C",
       "raw_output": "C"
-    },{
-      "poem_id": "en_004",
-      "model_choice": "C",
-      "raw_output": "C"
-    },{
-      "poem_id": "en_005",
-      "model_choice": "C",
-      "raw_output": "C"
     }
   ]
 }
