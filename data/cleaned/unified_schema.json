@@ -1,4 +1,32 @@
 {
   "schema_version": "1.0",
-  "description": "Unified schema for multilingual poetic meter annotation"
+  "description": "Unified schema for multilingual poetic meter evaluation in LLMs",
+  "poems": [
+    {
+      "poem_id": "en_001",
+      "language": "en",
+      "title": "Sonnet 18",
+      "author": "William Shakespeare",
+      "text": [
+        "Shall I compare thee to a summer's day?",
+        "Thou art more lovely and more temperate."
+      ],
+      "meter_candidates": [
+        "iambic_pentameter",
+        "trochaic_tetrameter",
+        "anapestic_tetrameter",
+        "free_verse"
+      ],
+      "gold_meter": "iambic_pentameter",
+      "rationale": "Dominant iambic stress pattern across lines.",
+      "annotation_method": [
+        "manual",
+        "api_assisted"
+      ],
+      "source": {
+        "type": "public_domain",
+        "name": "Project Gutenberg"
+      }
+    }
+  ]
 }
