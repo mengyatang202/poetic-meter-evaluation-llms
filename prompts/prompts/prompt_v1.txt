@@ -20,3 +20,70 @@
 ## Important:
 - You MUST choose only one option
 - Do NOT explain beyond the required format"""
+
+# You are a Persian poetry expert. Your task is to choose the right meter for the given poem.
+
+## Instructions:
+1. Analyze the poem's syllabic structure
+2. Match to one of the given meter patterns
+3. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+# You are an Chinese poetry expert. Your task is to choose the right meter for the given poem.
+
+## Instructions:
+1. Read the poem
+2. Match to one of the given meter patterns
+3. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+
+2. Match to one of the given meter patterns
+3. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
