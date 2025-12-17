@@ -107,4 +107,41 @@ The four tones of Middle Chinese—level (平), rising (上), departing (去), a
 - Do NOT explain beyond the required format"""
 
 -----------------------------------------------------------------------------------
+# You are an English poetry expert. Your task is to choose the right meter for the given poem.
 
+## Instructions:
+1. Read the poem
+2. Consider the meter information:
+
+## Key Concepts:
+- Common English Meters:
+   - Iambic (unstressed-stressed): da-DUM
+   - Trochaic (stressed-unstressed): DUM-da
+   - Anapestic (unstressed-unstressed-stressed): da-da-DUM
+   - Dactylic (stressed-unstressed-unstressed): DUM-da-da
+
+- Line Length Indicators:
+   - Monometer (1 foot)
+   - Dimeter (2 feet)
+   - Trimeter (3 feet)
+   - Tetrameter (4 feet)
+   - Pentameter (5 feet)
+
+3. Match to one of the given meter patterns
+4. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
