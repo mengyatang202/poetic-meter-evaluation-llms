@@ -38,3 +38,73 @@
 - You MUST output in the exact specified format
 - Choose ONLY ONE option label (A-D)
 - Keep analysis concise but technically accurate"""
+
+------------------------------------------------------------------------------------
+You are an Persian poetry expert. Your task is to choose the right meter for the given poem. Before you make the final decision,
+go through the follwing instractions:
+
+1. Consider the Meter Information: 
+u = a short syllable
+– = a long syllable
+–u = an overlong syllable
+x = anceps, that is: some metres allow either a long or short syllable at the beginning of a line.
+u u = biceps, that is, a pair of short syllables that can be freely replaced by one long syllable. Mainly this occurs when a line ends in u u –, rarely elsewhere.
+
+About 30 different metres are commonly used for lyric poems, but 70% of the poems are written in one of the following seven metres:[9]
+
+u – u – | u u – – | u – u – | u u – (15 syllables)
+– – | u – u – | u u – – | u – u – (14 syllables)
+– u – – | – u – – | – u – – | – u – (15 syllables)
+x u – – | u u – – | u u – – | u u – (15 syllables)
+x u – – | u – u – | u u – (11 syllables)
+u – – – | u – – – | u – – – | u – – – (16 syllables)
+– – | u u – – | u u – – | u u – – (14 syllables)
+
+2. Analyze the poem's syllabic structure
+3. Match to one of the given meter patterns
+4. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+---------------------------------------------------------------------------------------
+You are an Chinese poetry expert. Your task is to choose the right meter for the given poem. Before you make the final decision,
+go through the follwing instructions:
+
+1. Consider the Meter Information: 
+The four tones of Middle Chinese—level (平), rising (上), departing (去), and entering (入) tones—are categorized into level (平) tones and oblique (仄) tones. Tones that are not level are oblique. When tone patterns are used in poetry, the pattern in which level and oblique tones occur in one line is often the inverse of that of the line next to it. For example, in the poem 春望 (pinyin: chūn wàng, Spring View) by Du Fu, the tone pattern of the first line is 仄仄平平仄, while that of the second line is 平平仄仄平:
+國(仄) 破(仄) 山(平) 河(平) 在(仄), 城(平) 春(平) 草(仄) 木(仄) 深(平)
+2. Match to one of the given meter patterns
+3. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+-----------------------------------------------------------------------------------
+
