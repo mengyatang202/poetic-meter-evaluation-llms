@@ -38,3 +38,62 @@
 - You MUST output in the exact specified format
 - Choose ONLY ONE option label (A-D)
 - Keep analysis concise but technically accurate"""
+
+-----------------------------------------------------
+# Chinese Poetry Meter Identification Task
+
+## Expert Role
+You are a scholar specializing in classical Chinese poetry meter patterns.
+
+## Core Concepts
+1. Tone Categories:
+   - Level tones (平): First tone (阴平) and second tone (阳平) in modern Mandarin
+   - Oblique tones (仄): Third tone (上声), fourth tone (去声), and entering tone (入声)
+
+2. Basic Rules:
+   - Alternation within lines
+   - Contrast between paired lines
+   - Connection between stanzas
+
+## Analysis Steps:
+1. Annotate each character's tone (level/oblique)
+2. Identify line-internal patterns
+3. Verify couplet relationships
+4. Check stanza connections
+5. Match to the closest option
+
+## Common Patterns:
+1. 五言绝句 (5-character quatrain):
+   仄仄平平仄
+   平平仄仄平
+   平平平仄仄
+   仄仄仄平平
+
+2. 七言律诗 (7-character regulated verse):
+   平平仄仄平平仄
+   仄仄平平仄仄平
+   仄仄平平平仄仄
+   平平仄仄仄平平
+
+## Special Notes:
+1. Watch for entering tone characters (e.g., 白, 屋) that are oblique
+2. Recognize common tonal substitutions
+3. Account for rhyming variations
+
+## Poem to Analyze:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Required Output Format:
+<ANALYSIS>
+- Line 1 tones: 
+- Line 2 tones: 
+- Couplet relationship:
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>"""
+
+---------------------------------------------------------------------------
+
