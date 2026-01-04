@@ -1,0 +1,43 @@
+# arabic
+[
+  {
+    "language": "ar",
+    "prompt": "You are an expert in Arabic poetic meter analysis. Follow these instructions precisely:\n1. Analyze the given poem excerpt\n2. Consider meter context\n3. Select the ONE correct meter pattern from the options\n4. Respond EXACTLY with: <START_OUTPUT>[option_letter]</END_OUTPUT>\n\n[Meter Context]\n- Arabic meters are based on mnemonic words called 'tafāʿīl' (تفاعيل)\n- Common meters:\n  * Ṭawīl (long): Faʿūlun Mafāʿīlun Faʿūlun Mafāʿilun\n  * Basīṭ (spread): Mustafʿilun Fāʿilun Mustafʿilun Faʿilun\n  * Kāmil",
+    "correct": 32,
+    "incorrect": 116,
+    "accuracy": 0.2162
+  }
+]
+
+# chinese
+[
+  {
+    "language": "ch",
+    "prompt": "You are an expert in Chinese poetic meter analysis. Follow these instructions precisely:\n1. Analyze the given poem excerpt\n2. Select the ONE correct meter pattern from the options\n3. Respond EXACTLY with: <START_OUTPUT>[option_letter]</END_OUTPUT>\n\n[Poem Excerpt]\n{poem_text}\n\n[Meter Options]\n{options_text}\n\n[Examples of Correct Output]\n<START_OUTPUT>[B]</END_OUTPUT>\n<START_OUTPUT>[D]</END_OUTPUT>\"\"\"",
+    "correct": 30,
+    "incorrect": 93,
+    "accuracy": 0.2439
+  }
+]
+
+# english
+[
+  {
+    "language": "en",
+    "prompt": "You are an expert in English poetry and poetic meter.\n\nYour task is to identify the meter of the following poem excerpt, based on the four candidate options. Each option represents a known metrical pattern. Return only the correct option.\n\nInstructions:\n- Use examples and your expertise in meter recognition.\n- Respond with exactly one of the following: [Option A], [Option B], [Option C], or [Option D]\n- Do not add explanation.\n- Wrap your output strictly between: <START_OUTPUT>[Option X]</END_OUTPUT>\n- Write exactly: <START_OUTPUT>[Option X]</END_OUTPUT> (including the brackets)\n\n\nPoem excerpt:\n{poem.Text}\n\nMeter options:\n{options_text}\n\nContext:\n- Iambic: ˘ / (unstressed-stressed, e.g., \"a-LONE\")\n- Trochaic: / ˘ (stressed-unstressed, e.g., \"LOVE-ly\")\n- Anapestic: ˘ ˘ / (e.g., \"in the DARK\")\n- Dactylic: / ˘ ˘ (e.g., \"HAP-pi-ly\")\n- Spondee: / /\n- Catalectic: missing syllables in final foot\n\nExamples:\n1. The(^) stag(/) at(^) eve(/) had(^) drunk(/) his(^) fill(/)  \n   → Metric1: iambic tetrameter\n\n2. Lit(/) the(^) flit(/) ting(^) white(/) fire(^) in(/) sect(^),  \n   → Metric2: trochaic tetrameter\n\n3. Can(/) non(^) to(^) right(/) of(^) them(^),  \n   → Metric3: dactylic dimeter\n\n4. My(^) heart's(/) in(^) the(^) High(/) lands(^), my(^) heart(/) is(^) not(^) here(/)  \n   → Metric4: iambic tetrameter with anapestic substitution\n\n5. And(^) still(/) she(^) slept(/) and(^) az(/) ure(^) lid(/) ded(^) sleep(/)  \n   → Metric5: iambic pentameter",
+    "correct": 132,
+    "incorrect": 117,
+    "accuracy": 0.5301
+  }
+]
+
+# persian
+[
+  {
+    "language": "fa",
+    "prompt": "You are analyzing Persian poetic meter (عروض). Strictly follow these rules:\n\n1. Transliterate the couplet to Latin script for analysis\n2. Identify syllable patterns and stress positions\n3. Select ONLY ONE option in EXACTLY this format:\n   <START_OUTPUT>[Option X]</END_OUTPUT> \n   where X is A/B/C/D\n\n**Couplet**:\n{poem.Text}\n\n**Options**:\n{options_text}\n\n**Critical**:\n- Never explain your choice\n- If uncertain, guess but ALWAYS use the required format\n- Example valid response: <START_OUTPUT>[Option B]</END_OUTPUT>",
+    "correct": 41,
+    "incorrect": 220,
+    "accuracy": 0.1571
+  }
+]
