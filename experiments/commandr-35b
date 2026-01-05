@@ -460,3 +460,227 @@ def main():
 if __name__ == "__main__":
     main()
 
+# english
+import json
+from openai import OpenAI
+from tqdm import tqdm
+import re
+import random
+from typing import List, Dict, Tuple
+from datetime import datetime
+
+# Configuration
+MODEL_NAME = "command-r:35b"  # Fixed model name format
+POEMS_FILE = "eng_308_modified.json"
+METRICS_FILE = "eng_metric.json"
+OUTPUT_FILE = "eng_results_3.json"
+MAX_TOKENS = 200
+
+# Ollama Client Setup
+client = OpenAI(
+    base_url='http://localhost:11436/v1',
+    api_key='ollama',
+    timeout=60.0
+)
+
+class Poem:
+    def __init__(self, text, metric_name):
+        self.text = text[:MAX_TOKENS]
+        self.metric_name = metric_name
+
+def load_data():
+    """Load poems and metrics data with validation"""
+    with open(POEMS_FILE, 'r', encoding='utf-8') as f:
+        poems_data = json.load(f)
+    
+    with open(METRICS_FILE, 'r', encoding='utf-8') as f:
+        metrics_data = json.load(f)
+    
+    poems = []
+    for item in poems_data:
+        if not item:  # Skip None items
+            continue
+        text = item.get("Text", "").strip()
+        metric = item.get("PoemMetric", "").strip() if item.get("PoemMetric") else ""
+        if text and metric:
+            poems.append(Poem(text, metric))
+        else:
+            print(f"Skipping invalid data: Text={text[:30]}..., Metric={metric}")
+    
+    return poems, metrics_data
+
+def generate_options(correct_pattern: str, all_metrics: Dict[str, str]) -> Tuple[List[Dict], str]:
+    """Generate randomized options with validation"""
+    incorrect_pool = list(set(v for v in all_metrics.values() if v != correct_pattern))
+    
+    if not incorrect_pool:
+        incorrect_pool = ["unknown_meter"] * 3
+    
+    sampled_incorrect = random.sample(incorrect_pool * 3, 3)
+    labels = ['A', 'B', 'C', 'D']
+    correct_pos = random.randint(0, 3)
+    options = []
+    
+    for i, label in enumerate(labels):
+        pattern = correct_pattern if i == correct_pos else sampled_incorrect.pop()
+        options.append({
+            "label": label,
+            "pattern": pattern,
+            "is_correct": i == correct_pos
+        })
+    
+    return options, labels[correct_pos]
+
+def create_prompt(poem_text: str, options: List[Dict]) -> str:
+    """Enhanced English poetry prompt"""
+    options_text = "\n".join(f"{opt['label']}. {opt['pattern']}" for opt in options)
+    
+    return f"""
+# You are an English poetry expert. Your task is to choose the right meter for the given poem.
+
+## Instructions:
+1. Read the poem
+2. Consider the meter information:
+
+## Key Concepts:
+- Common English Meters:
+   - Iambic (unstressed-stressed): da-DUM
+   - Trochaic (stressed-unstressed): DUM-da
+   - Anapestic (unstressed-unstressed-stressed): da-da-DUM
+   - Dactylic (stressed-unstressed-unstressed): DUM-da-da
+
+- Line Length Indicators:
+   - Monometer (1 foot)
+   - Dimeter (2 feet)
+   - Trimeter (3 feet)
+   - Tetrameter (4 feet)
+   - Pentameter (5 feet)
+
+3. Consider the examples:
+- The(^) stag(/) at(^) eve(/) had(^) drunk(/) his(^) fill(/)  
+   → Metric: iambic tetrameter
+
+- Lit(/) the(^) flit(/) ting(^) white(/) fire(^) in(/) sect(^),  
+   → Metric: trochaic tetrameter
+
+- Can(/) non(^) to(^) right(/) of(^) them(^),  
+   → Metric: dactylic dimeter
+
+- My(^) heart's(/) in(^) the(^) High(/) lands(^), my(^) heart(/) is(^) not(^) here(/)  
+   → Metric: iambic tetrameter with anapestic substitution
+
+- And(^) still(/) she(^) slept(/) and(^) az(/) ure(^) lid(/) ded(^) sleep(/)  
+   → Metric: iambic pentameter
+   
+4. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+def parse_output(output: str) -> str:
+    """Improved output parsing"""
+    patterns = [
+        r"<FINAL>\s*\[([A-D])\]",
+        r"<FINAL>\s*([A-D])",
+        r"Answer\s*:\s*([A-D])",
+        r"\b([A-D])\b(?!.*\b\1\b)"
+    ]
+    
+    for pattern in patterns:
+        if match := re.search(pattern, output, re.IGNORECASE):
+            return match.group(1).upper()
+    
+    raise ValueError(f"Invalid output format: {output[:200]}...")
+
+def process_poem(poem: Poem, metrics: Dict[str, str]) -> Dict:
+    """Process each poem with error handling"""
+    try:
+        correct_pattern = metrics.get(poem.metric_name)
+        if not correct_pattern:
+            raise ValueError(f"Meter pattern not found: {poem.metric_name}")
+        
+        options, correct_label = generate_options(correct_pattern, metrics)
+        prompt = create_prompt(poem.text, options)
+        
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=300,
+            stop=["</FINAL>"]
+        )
+        output = response.choices[0].message.content
+        predicted_label = parse_output(output)
+        
+        return {
+            "metadata": {
+                "model": MODEL_NAME,
+                "timestamp": datetime.now().isoformat(),
+                "prompt_version": "english_v1"
+            },
+            "poem_text": poem.text,
+            "prompt": prompt,
+            "options": options,
+            "correct_label": correct_label,
+            "predicted_label": predicted_label,
+            "is_correct": predicted_label == correct_label,
+            "raw_output": output
+        }
+    except Exception as e:
+        return {
+            "poem_text": poem.text,
+            "error": str(e),
+            "correct_metric": poem.metric_name
+        }
+
+def main():
+    poems, metrics = load_data()
+    results = []
+    
+    for poem in tqdm(poems, desc="Processing poems"):
+        result = process_poem(poem, metrics)
+        results.append(result)
+        
+        if len(results) % 10 == 0:
+            valid = [r for r in results if 'error' not in r]
+            accuracy = sum(r['is_correct'] for r in valid) / len(valid) if valid else 0
+            print(f"Progress: {len(results)}/{len(poems)} | Accuracy: {accuracy:.1%}")
+
+    successful = [r for r in results if 'error' not in r]
+    accuracy = sum(r['is_correct'] for r in successful) / len(successful) if successful else 0
+    
+    output_data = {
+        "summary": {
+            "total_poems": len(results),
+            "successful": len(successful),
+            "failed": len(results) - len(successful),
+            "accuracy": accuracy,
+            "model": MODEL_NAME,
+            "date": datetime.now().isoformat()
+        },
+        "results": results
+    }
+    
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"\n✅ Completed! Accuracy: {accuracy:.1%} | Success: {len(successful)} | Failed: {len(results)-len(successful)}")
+    if len(results) - len(successful) > 0:
+        print("Failed cases:", [r['poem_text'][:30]+"..." for r in results if 'error' in r][:3])
+
+if __name__ == "__main__":
+    main()
+
