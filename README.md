@@ -1,4 +1,13 @@
-# Poetic Meter Evaluation in Large Language Models
+## TL;DR
+
+This repository contains experiments evaluating large language models on poetic meter recognition across multiple languages.
+
+If you only have a few minutes:
+- See `prompts/README.md` for prompt design
+- See `evaluation/evaluation_protocol.md` for evaluation criteria
+- See `evaluation/accuracy_results/` for main results
+--------------------------------------------------------------------------------
+
 
 This repository contains the data, prompts, model outputs, and evaluation scripts
 for my bachelor's thesis:
@@ -30,7 +39,7 @@ Key features:
 ## Repository Structure
 
 See the folder structure for:
-- `data/`: raw, cleaned, and annotated poetic datasets
+- `data/`: raw and annotated poetic datasets
 - `prompts/`: prompt templates used for evaluation
 - `experiments/`: model-specific outputs
 - `evaluation/`: accuracy metrics and protocols
