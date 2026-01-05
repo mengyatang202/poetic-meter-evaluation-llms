@@ -1,1 +1,2 @@
-Raw poetic data collected from APIs, Kaggle, and GitHub datasets.
+Raw data is not redistributed due to licensing constraints.
+This folder contains placeholders / processed annotations only.
