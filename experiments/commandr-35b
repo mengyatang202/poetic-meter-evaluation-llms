@@ -684,3 +684,213 @@ def main():
 if __name__ == "__main__":
     main()
 
+# arabic: context + transliterate
+import json
+from openai import OpenAI
+from tqdm import tqdm
+import re
+import random
+from typing import List, Dict, Tuple
+from datetime import datetime
+
+# Configuration
+MODEL_NAME = "command-r:35b"
+POEMS_FILE = "arabic_150_modified.json"
+METRICS_FILE = "arabic_metric.json"
+OUTPUT_FILE = "arabic_results_4.json"
+MAX_TOKENS = 200  # Limit poem length
+
+# Ollama Client Setup
+client = OpenAI(
+    base_url='http://localhost:11437/v1',
+    api_key='ollama',
+    timeout=60.0  # 增加超时时间
+)
+
+class Poem:
+    def __init__(self, text, metric_name):
+        self.text = text[:MAX_TOKENS]  # Take first 200 tokens
+        self.metric_name = metric_name
+
+def load_data():
+    """Load poems and metrics data with validation"""
+    with open(POEMS_FILE, 'r', encoding='utf-8') as f:
+        poems_data = json.load(f)
+    
+    with open(METRICS_FILE, 'r', encoding='utf-8') as f:
+        metrics_data = json.load(f)
+    
+    poems = []
+    for item in poems_data:
+        text = item.get("Text", "").strip()
+        metric = item.get("PoemMetric", "").strip()
+        if text and metric:
+            poems.append(Poem(text, metric))
+        else:
+            print(f"跳过无效数据: Text={text[:30]}..., Metric={metric}")
+    
+    return poems, metrics_data
+
+def generate_options(correct_pattern: str, all_metrics: Dict[str, str]) -> Tuple[List[Dict], str]:
+    """Generate randomized options with validation"""
+    # Ensure incorrect patterns are truly different
+    incorrect_pool = list(set(v for v in all_metrics.values() if v != correct_pattern))
+    
+    if not incorrect_pool:
+        incorrect_pool = ["unknown_meter"] * 3
+    
+    # Ensure we don't sample duplicates
+    sampled_incorrect = random.sample(incorrect_pool * 3, 3)  # Allow repetition only if necessary
+    
+    labels = ['A', 'B', 'C', 'D']
+    correct_pos = random.randint(0, 3)
+    options = []
+    
+    for i, label in enumerate(labels):
+        pattern = correct_pattern if i == correct_pos else sampled_incorrect.pop()
+        options.append({
+            "label": label,
+            "pattern": pattern,
+            "is_correct": i == correct_pos
+        })
+    
+    return options, labels[correct_pos]
+
+def create_prompt(poem_text: str, options: List[Dict]) -> str:
+    """Enhanced prompt with clearer instructions"""
+    options_text = "\n".join(f"{opt['label']}. {opt['pattern']}" for opt in options)
+    
+    return f"""
+You are an Arabic poetry expert. Your task is to choose the right meter for the given poem. Before you make the final decision,
+go through the follwing instractions:
+
+1. Consider the Meter Information: 
+- Arabic meters are based on mnemonic words called 'tafāʿīl' (تفاعيل)
+- Common meters:
+  * Ṭawīl (long): Faʿūlun Mafāʿīlun Faʿūlun Mafāʿilun
+  * Basīṭ (spread): Mustafʿilun Fāʿilun Mustafʿilun Faʿilun
+  * Kāmil (complete): Mutafāʿilun (repeated 3 times)
+  * Hazaj (truncated): Mafāʿīlun (repeated 2 times)
+  * Rajaz (trembling): Mustafʿilun (repeated 3 times)
+  * Mutaqārib (approaching): Faʿūlun (repeated 4 times)
+
+2. Transliterate Arabic to Latin
+3. Analyze the poem's syllabic structure
+4. Match to one of the given meter patterns
+5. Respond STRICTLY in this format:
+
+<ANALYSIS>
+- [Brief reasoning in 1-2 lines]
+</ANALYSIS>
+
+<FINAL>[A/B/C/D]</FINAL>
+
+## Poem:
+{poem_text}
+
+## Options:
+{options_text}
+
+## Important:
+- You MUST choose only one option
+- Do NOT explain beyond the required format"""
+
+def parse_output(output: str) -> str:
+    """More flexible output parsing"""
+    patterns = [
+        r"<FINAL>\s*\[([A-D])\]",
+        r"<FINAL>\s*([A-D])",
+        r"选择\s*([A-D])",
+        r"答案\s*:\s*([A-D])",
+        r"\b([A-D])\b(?!.*\b\1\b)"  # Standalone letter
+    ]
+    
+    for pattern in patterns:
+        if match := re.search(pattern, output, re.IGNORECASE):
+            return match.group(1).upper()
+    
+    raise ValueError(f"Invalid output format: {output[:200]}...")
+
+def process_poem(poem: Poem, metrics: Dict[str, str]) -> Dict:
+    """Enhanced processing with detailed logging"""
+    try:
+        correct_pattern = metrics.get(poem.metric_name)
+        if not correct_pattern:
+            raise ValueError(f"未找到格律模式: {poem.metric_name}")
+        
+        options, correct_label = generate_options(correct_pattern, metrics)
+        prompt = create_prompt(poem.text, options)
+        
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=250,
+            stop=["</FINAL>"]
+        )
+        output = response.choices[0].message.content
+        predicted_label = parse_output(output)
+        
+        return {
+            "metadata": {
+                "model": MODEL_NAME,
+                "timestamp": datetime.now().isoformat(),
+                "prompt_version": "v2.1"
+            },
+            "poem_text": poem.text,
+            "prompt": prompt,
+            "options": options,
+            "correct_label": correct_label,
+            "predicted_label": predicted_label,
+            "is_correct": predicted_label == correct_label,
+            "raw_output": output
+        }
+    except Exception as e:
+        return {
+            "poem_text": poem.text,
+            "error": str(e),
+            "correct_metric": poem.metric_name,
+            "options": options if 'options' in locals() else None
+        }
+
+def main():
+    poems, metrics = load_data()
+    results = []
+    
+    for poem in tqdm(poems, desc="Processing poems"):
+        result = process_poem(poem, metrics)
+        results.append(result)
+        
+        if len(results) % 10 == 0:
+            valid = [r for r in results if 'error' not in r]
+            accuracy = sum(r['is_correct'] for r in valid) / len(valid) if valid else 0
+            print(f"Progress: {len(results)}/{len(poems)} | Accuracy: {accuracy:.1%}")
+
+    # Calculate final stats
+    successful = [r for r in results if 'error' not in r]
+    accuracy = sum(r['is_correct'] for r in successful) / len(successful) if successful else 0
+    
+    # Enhanced output structure
+    output_data = {
+        "summary": {
+            "total_poems": len(results),
+            "successful": len(successful),
+            "failed": len(results) - len(successful),
+            "accuracy": accuracy,
+            "model": MODEL_NAME,
+            "date": datetime.now().isoformat()
+        },
+        "results": results
+    }
+    
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"\n✅ 完成! 准确率: {accuracy:.1%} | 成功: {len(successful)} | 失败: {len(results)-len(successful)}")
+    if len(results) - len(successful) > 0:
+        print("失败案例:", [r['poem_text'][:30]+"..." for r in results if 'error' in r][:3])
+
+if __name__ == "__main__":
+    main()
+
+
