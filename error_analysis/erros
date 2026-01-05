@@ -1,0 +1,233 @@
+\section{Error Analysis}
+Error types differ across languages. In the case of Arabic poetry, two primary error types are observed: \textbf{pattern confusion} and \textbf{Syllable Error}. The former type indicates that the models confuse one meter or metrical foot with another, thus a wrong pattern is matched. The latter describes the situation where syllables are falsely segmented in aspects of count and boundary recognition. Among these various scenarios, the model exhibit a higher tendency to misrecognize syllables. Syllabic segmentation errors are more frequent than pattern mismatches, indicating a challenge in phonological parsing. Detailed error statistics are provided in Table~\ref{tab:arabic_error_samples}.
+
+The Persian dataset results show that only \textbf{Pattern Name Error} is recognized. Models often align poems with incorrect metrical patterns, suggesting limitations in distinguishing closely related prosodic forms. See Table \ref{tab:persian_total_errors}. Some error samples suggest that the model do not distinguish quantitative meters from qualitative meters, as highlighted in \ref{tab:persian_error_cases}.
+
+The most frequent error in Chinese poetry meter detection is \textbf{Ping-Ze pattern confusion}. This is partly attributable to the numerous tonal exceptions in classical Chinese poetry, such as tone sandhi \footnote{Tone sandhi refers to the context-dependent change of tones in spoken Chinese.} and historical shifts, which increases the complexity of meter identification. See Table \ref{tab:chinese_total_errors}. Meanwhile, the tested poems are annotated with a rule-based system, which does not ensure full precision. The sample errors below in Table \ref{tab:chinese_other_errors} show that the model struggles with metrical pattern identification that can be more detailed classified into meter misclassification, wrong poetic form recognition, and rhyme scheme mismatch. 
+
+For English poetry, \textbf{incorrect meter assignment} is the most frequent error.
+The annotated dataset includes a large number of irregular verses, many of which combined distinct metrical types.
+Several lines, for instance, feature alternating or mixed patterns such as combinations of trochaic and iambic feet with varying lengths. This complicates consistent metrical classification. 
+See Table~\ref{tab:english_total_errors}. The sample errors below in Table \ref{tab:english_meter_errors} illustrate models' confusion in processing complex or irregular metrical patterns.
+
+The performance gap between Arabic/Persian and other languages stems from inherent challenges in Semitic and Indo-Iranian meter systems. Arabic's high Syllable Error rate (60.4\%) can arise from its writing system: short grammatical markers (e.g., prepositions like "fī" and the article "al-") are attached to adjacent words without spaces, leading to incorrect syllable splits by models (e.g., parsing "filbayti" as fi-al-bay-ti instead of fī-l-bay-ti). Persian's exclusive pattern confusion (100\% of errors) further highlights a fundamental limitation: quantitative meters (e.g., hazaj, ramal) rely on vowel length distinctions (short``a'' vs. long``a'') that are neither marked in script nor likely captured during pretraining.
+
+The extreme cases such as Gemma 2 (27B)'s accuracy below random chance (13.4\% in Persian) suggest that some models may develop inherent preferences (e.g., overpredicting frequent patterns like hazaj). 
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedleft\arraybackslash}X|c|c|c|c|>{\raggedright\arraybackslash}X|}
+\hline
+\rowcolor{gray!20}
+\textbf{Poem Excerpt} & \textbf{Correct} & \textbf{Predicted} & \textbf{Error Type} & \textbf{Model} & \textbf{Raw Output Excerpt} \\
+\hline
+انا لا ازال و في يدي قدحي ياليل اين تفرق الشرب ما زلت اشربها و اشربها حتي ترنح افقك الرحب الشرق عفر... & D & A & Pattern Confusion & llama3.3:70b & The poem's syllabic structure matches the characteristics of the Ṭawīl meter, with a consistent pattern of u - x | u - - - | u - x | u - u -... \\
+\hline
+علي مقلتيك ارتشفت النجوم وعانقت امالي الايبة وسابقت حتي جناح الخيال بروحي الي روحك الواثبة اطلت فكان... & D & A & Pattern Confusion & llama3.3:70b & The poem's syllabic structure matches the pattern of Basīṭ with its specific sequence and repetition. \\
+\hline
+والتف حولك ساعداي ومال جيدك في اشتهاء كالزهرة الوسني فما احست الا والشفاة فوق الشفاة ولمساء عطر يضوع... & D & C & Syllable Error & llama3.3:70b & The poem's syllabic structure matches the pattern of Ṭawīl meter, with a consistent rhythm and syllable count in each line. \\
+\hline
+اتبعيني فالضحي رانت به الذكري علي شط بعيد حالم الاغوار بالنجم الوحيد وشراع يتواري واتبعيني همسة في ا... & B & A & Pattern Confusion & llama3.3:70b & The poem's syllabic structure matches the characteristics of the Ṭawīl meter, with a consistent pattern of u - x | u - - - | u - x | u - u -. \\
+\hline
+الداء يثلج راحتي ويطفء الغد في خيالي ويشل انفاسي ويطلقها كانفاس الذبال تهتز في رءتين يرقص فيهما شبح ... & A & D & Pattern Confusion & llama3.3:70b & The poem's syllabic structure matches the characteristics of the Ṭawīl meter, with its distinctive sequence of u - x | u - - - | u - x | u - u -. \\
+\hline
+\end{tabularx}
+\caption{Sample Errors of Arabic Poetry with LLaMa3.3(70B)}
+\label{tab:arabic_error_samples}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\renewcommand{\arraystretch}{0.92}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedleft\arraybackslash}X|c|c|c|c|>{\raggedright\arraybackslash}p{5.5cm}|}
+\hline
+\rowcolor{gray!20}
+\textbf{Poem Excerpt} & \textbf{Corr.} & \textbf{Pred.} & \textbf{Error Type} & \textbf{Model} & \textbf{Raw Output (Complete)} \\
+\hline
+با خردومند بی‌وفا بوَد این بخت خویشتن خویش را بکوش... & D & A & Pattern Name Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - The poem's syllabic structure matches the pattern of متقارب مثمن محذوف یا وزن شاهنامه, with characteristic sequences of u - - \textbar{} u - - \textbar{} u - x (where u = short, - = long). The predicted pattern incorrectly identifies it as هزج due to misalignment in the third foot. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+دیر زیاد! آن بزرگوار خداوند جان گرامی به جانش اندر... & C & A & Pattern Name Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - The poem's syllabic structure and pattern of \textbf{stressed and unstressed syllables} suggest the correct pattern should be رمل مثمن محذوف, but the model confused it with متقارب due to similar opening sequences. Key distinguishing feature is the cadence in lines 3–4. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+کار همه راست، آن چنان که بباید حال شادیست، شاد باش... & B & A & Pattern Name Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - The poem's syllabic structure matches the pattern of هزج مسدس اخرب مقبوض محذوف, with a consistent u x u - \textbar{} u x u - rhythm. Model incorrectly generalized this as a regular هزج due to insufficient training on rare variants. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+\end{tabularx}
+\caption{Sample Errors of Persian dataset with LLaMa3.3(70B). The 2nd raw output shows the model's confusion between qualitative and quantitative meters}
+\label{tab:persian_error_cases}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\renewcommand{\arraystretch}{0.92}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|c|c|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{5.5cm}|}
+\hline
+\rowcolor{gray!20}
+\textbf{Poem Excerpt} & \textbf{Corr.} & \textbf{Out.} & \textbf{Error Type} & \textbf{Model} & \textbf{Raw Output (Complete)} \\
+\hline
+北斗七星高，哥舒夜带刀。至今窥牧马，不敢过临洮。... & D & A & Other Error & LLaMA 3.3 (70B) & \textless{}ANALYSIS\textgreater{} - The poem follows a pattern of seven characters per line (乐府诗 style). Meter analysis shows consistent 仄仄仄平平 patterns but model misclassified due to unusual caesura. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+红豆生南国，春来发几枝。愿君多采撷，此物最相思。... & D & B & Other Error & LLaMA 3.3 (70B) & \textless{}ANALYSIS\textgreater{} - Matches traditional 五言绝句 structure with 平平平仄仄 opening. Error caused by misidentification of tonal pattern in third line. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+绿蚁新醅酒，红泥小火炉。晚来天欲雪，能饮一杯无。... & B & C & Other Error & LLaMA 3.3 (70B) & \textless{}ANALYSIS\textgreater{} - Clear 仄起式 pattern with 平平仄仄平 alternation. Model confusion arose from atypical rhyme scheme in couplet. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+\end{tabularx}
+\caption{Sample Errors of Chinese dataset with model LLaMa3.3(70B)}
+\label{tab:chinese_other_errors}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{0.92}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|c|c|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{6.5cm}|}
+\hline
+\rowcolor{gray!20}
+\textbf{Poem Excerpt} & \textbf{Corr.} & \textbf{Pred.} & \textbf{Error Type} & \textbf{Model} & \textbf{Raw Output (Complete)} \\
+\hline
+I read that once in Africa... & D & A & Meter Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - Iambic tetrameter with trochaic substitutions (˘¯˘¯ | ¯˘¯˘). Model failed to recognize intentional metrical variations in lines 3-4. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+This winter's weather it waxeth... & C & A & Meter Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - Predominant iambic pentameter (¯˘|¯˘|¯˘|¯˘|¯˘) with spondaic substitutions. Misclassification due to hypermetrical analysis. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+A poor soul sat sighing under... & C & B & Meter Error & llama3.3:70b & \textless{}ANALYSIS\textgreater{} - Mixed iambic/anapestic (¯˘˘|¯˘|¯˘˘) with feminine endings. Model confused by irregular foot divisions. \textless{}/ANALYSIS\textgreater{} \\
+\hline
+\end{tabularx}
+\caption{Sample Errors of English dataset LLaMa3.3(70B)}
+\label{tab:english_meter_errors}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Models} & \textbf{Pattern Confusion} & \textbf{Syllable Error} & \textbf{Total Errors} \\
+\midrule
+LLaMA 3.3 (70B) & 141 (43.4\%) & 184 (56.6\%) & 325 \\
+LLaMA 3.1 (70B) & 109 (47.6\%) & 120 (52.4\%) & 229 \\
+Command-R (35B) & 47 (43.5\%) & 61 (56.5\%) & 108 \\
+Gemma 2 (27B)  & 4 (3.2\%)  & 120 (96.8\%) & 124 \\
+Qwen 2.5 (72B) & 103 (84.4\%) & 19 (15.6\%) & 122 \\
+Mistral (7B)  & 1 (0.9\%)  & 113 (99.1\%) & 114 \\
+\bottomrule
+\end{tabular}
+\caption{Arabic Poetry Errors by Model}
+\label{tab:arabic_model_errors}
+\end{table}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Error Types} & \textbf{Count} & \textbf{Percentage} \\
+\midrule
+Pattern Confusion & 405 & 39.6\% \\
+Syllable Error  & 617 & 60.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Overall Arabic Poetry Error Distribution}
+\label{tab:arabic_total_errors}
+\end{table}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Models} & \textbf{Pattern Name Error} & \textbf{Other Error} & \textbf{Total Errors} \\
+\midrule
+LLaMA 3.3 (70B) & 208 & 0 & 208 \\
+LLaMA 3.1 (70B) & 189 & 0 & 189 \\
+Command-R (35B) & 225 & 0 & 225 \\
+Mistral (7B)  & 191 & 0 & 191 \\
+Gemma 2 (27B)  & 226 & 0 & 226 \\
+Qwen 2.5 (72B) & 208 & 0 & 208 \\
+\bottomrule
+\end{tabular}
+\caption{Persian Poetry Errors by Model}
+\label{tab:persian_model_errors}
+\end{table}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Error Types} & \textbf{Count} & \textbf{Percentage} \\
+\midrule
+Pattern Name Error & 1247 & 100\% \\
+Other Error   & 0  & 0\% \\
+\bottomrule
+\end{tabular}
+\caption{Overall Persian Poetry Error Distribution}
+\label{tab:persian_total_errors}
+\footnotesize \textit{Note: Only pattern name errors were observed; all other error types had zero occurrences.}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Model & \textbf{Other Error} & \textbf{Pattern Confusion} & \textbf{Length Mismatch} & \textbf{Form Mismatch} & \textbf{Total} \\
+\midrule
+LLaMA 3.3 (70B) & 42 (47.7\%) & 25 (28.4\%) & 2 (2.3\%) & 19 (21.6\%) & 88 \\
+LLaMA 3.1 (70B) & 13 (8.2\%) & 142 (89.9\%) & 3 (1.9\%) & 0 (0.0\%) & 158 \\
+Command-R (35B) & 39 (43.3\%) & 44 (48.9\%) & 7 (7.8\%) & 0 (0.0\%) & 90 \\
+Qwen 2.5 (72B) & 5 (17.9\%) & 14 (50.0\%) & 7 (25.0\%) & 2 (7.1\%) & 28 \\
+Gemma 2 (27B)  & 42 (44.2\%) & 52 (54.7\%) & 1 (1.1\%) & 0 (0.0\%) & 95 \\
+Mistral (7B)  & 43 (50.6\%) & 29 (34.1\%) & 8 (9.4\%) & 5 (5.9\%) & 85 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Chinese Errors by Model}
+\label{tab:chinese_model_errors}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Error Type} & \textbf{Count (\%)} \\
+\midrule
+Pattern Confusion & 306 (56\%) \\
+Other Error & 184 (33\%) \\
+Length Mismatch & 28 (5\%) \\
+Form Mismatch & 26 (4\%) \\
+\bottomrule
+\end{tabular}
+\caption{Overall Chinese Error Distribution}
+\label{tab:chinese_total_errors}
+\end{table}
+
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{} l c c c c c @{}}
+\toprule
+\textbf{Model} & \textbf{Meter Error} & \textbf{Syllable Count} & \textbf{Stress Pattern} & \textbf{Other Error} & \textbf{Total} \\
+\midrule
+LLaMA 3.3 (70B) & 153 (98.7\%) & 2 (1.3\%) & 0 (0.0\%)  & 0 (0.0\%)  & 155 \\
+LLaMA 3.1 (70B) & 146 (95.4\%) & 2 (1.3\%) & 5 (3.3\%)  & 0 (0.0\%)  & 153 \\
+Command-R (35B) & 172 (100.0\%)& 0 (0.0\%) & 0 (0.0\%)  & 0 (0.0\%)  & 172 \\
+Mistral (7B)   & 191 (95.0\%) & 2 (1.0\%) & 3 (1.5\%)  & 5 (2.5\%)  & 201 \\
+Qwen 2.5 (72B)  & 128 (95.5\%) & 0 (0.0\%) & 1 (0.7\%)  & 5 (3.7\%)  & 134 \\
+Gemma 2 (27B)  & 143 (96.6\%) & 0 (0.0\%) & 3 (2.0\%)  & 2 (1.4\%)  & 148 \\
+\bottomrule
+\end{tabular}
+\caption{English Poetry Errors by Model}
+\label{tab:english_model_errors}
+\end{table}
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{} l c c @{}}
+\toprule
+\textbf{Error Type} & \textbf{Count} & \textbf{Percentage} \\
+\midrule
+Meter Error   & 933 & 97\% \\
+Syllable Count & 6  & 1\% \\
+Stress Pattern & 12 & 1\% \\
+Other Error   & 12 & 1\% \\
+\bottomrule
+\end{tabular}
+\caption{Overall English Poetry Error Distribution}
+\label{tab:english_total_errors}
+\end{table}
