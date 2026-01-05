@@ -1,4 +1,4 @@
-# persian
+# persian: context + examples
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -243,7 +243,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# chinese
+# chinese: context + examples
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -460,7 +460,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# english
+# english: context + examples
 import json
 from openai import OpenAI
 from tqdm import tqdm
