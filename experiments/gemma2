@@ -1,4 +1,4 @@
-# chinese
+# chinese: context + examples
 import json
 from openai import OpenAI
 from tqdm import tqdm
