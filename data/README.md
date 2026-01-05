@@ -7,3 +7,7 @@ This project uses data obtained from:
 
 Due to licensing constraints, the original datasets are not redistributed in this repository.
 References and example sources are listed below.
+https://www.kaggle.com/
+https://github.com/
+https://www.guwendao.net/
+https://ganjoor.net/
