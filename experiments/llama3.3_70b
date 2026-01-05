@@ -1,4 +1,4 @@
-# arabic
+# arabic: base
 MODEL_NAME = "llama3.3:70b"
 POEMS_FILE = "arabic_150_modified.json"
 METRICS_FILE = "arabic_metric.json"
@@ -187,8 +187,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# same model: llama3.3
-# changed prompt
+# arabic: same model + modified prompt
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -405,7 +404,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# persian
+# persian: base
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -604,7 +603,7 @@ if __name__ == "__main__":
     main()
 
 
-# chinese
+# chinese: base
 import json
 from openai import OpenAI
 from tqdm import tqdm
@@ -802,7 +801,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# english
+# english: base
 import json
 from openai import OpenAI
 from tqdm import tqdm
